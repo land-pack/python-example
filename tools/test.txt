@@ -1,0 +1,13 @@
+Nmap scan report for 172-0-0-35.lightspeed.brhmal.sbcglobal.net (172.0.0.35) 
+Host is up. 
+All 1000 scanned ports on 172-0-0-35.lightspeed.brhmal.sbcglobal.net (172.0.0.35) are filtered 
+
+Nmap scan report for 172-0-0-36.lightspeed.brhmal.sbcglobal.net (172.0.0.36) 
+Host is up. 
+All 1000 scanned ports on 172-0-0-36.lightspeed.brhmal.sbcglobal.net (172.0.0.36) are filtered 
+
+Nmap scan report for 172-0-0-37.lightspeed.brhmal.sbcglobal.net (172.0.0.37) 
+Host is up (0.27s latency). 
+Not shown: 999 filtered ports 
+PORT STATE SERVICE 
+8000/tcp open http-alt
