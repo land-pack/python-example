@@ -30,15 +30,26 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
     with DB() as db:
         cursor = db.cursor()
 
-        sql = """
+        get_balance_sql = """
             SELECT f_balance as balance
             FROM t_account
-            WHERE f_uid=%s AND f_status=0
+            WHERE f_uid=%s AND f_status=0 AND f_balance >= %s
+        """
+        
+        mod_balance_sql = """
+            UPDATE t_account
+            SET f_balance=f_balance - %s
+            WHERE f_uid=%s AND f_status=0 AND f_balance >= %s
         """
 
+
         try:
-            cursor.execute(sql, (f_uid, ))
+            cursor.execute(get_balance_sql, (f_uid, f_amount))
             d = cursor.fetchone()
+            
+            cursor.execute(mod_balance_sql, (f_amount, f_uid, f_amount))
+
+            db.commit()    
         except:
             db.rollback()
             print(traceback.format_exc())
@@ -47,7 +58,7 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
             return d if d else {}
 
 if __name__ == '__main__':
-    d = send_redpacket('12', 12, 12,1)
+    d = send_redpacket(12345, 11.000001, 12,1)
     print(d)
 
     

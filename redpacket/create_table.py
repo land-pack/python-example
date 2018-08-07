@@ -16,7 +16,7 @@ clean_log_sql = "DROP TABLE IF EXISTS `t_redpacket_log`"
 create_account_sql = """
     CREATE TABLE t_account(
         f_id BIGINT NOT NULL AUTO_INCREMENT,
-        f_uid BIGINT NOT NULL,
+        f_uid BIGINT NOT NULL UNIQUE,
         f_balance DECIMAL(16,8),
         f_status int NOT NULL DEFAULT 0,
         PRIMARY KEY (f_id))
