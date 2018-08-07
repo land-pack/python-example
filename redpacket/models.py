@@ -46,6 +46,10 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
         try:
             cursor.execute(get_balance_sql, (f_uid, f_amount))
             d = cursor.fetchone()
+
+            if not d:
+                #raise ....
+                pass
             
             cursor.execute(mod_balance_sql, (f_amount, f_uid, f_amount))
 
