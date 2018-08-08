@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import jsonify
+from flask import request
 from excep import Excep
 from models import send_redpacket
 
@@ -15,15 +16,21 @@ def excep_handler(error):
 
 
 
-@app.route("/api/v1/send")
+@app.route("/api/v1/send", methods=['POST'])
 def api_v1_send():
+    # TODO GET UID BY Token
+    
     # check personal balance
-
+    d = request.get_json()
+    uid = d.get("uid")
+    amount = d.get("amount")
+    number = d.get("number")
+    f_type = d.get("type") or 1
     # amount suggestion
 
     # random generate put it all into the redis queue & set expire time
     #return jsonify({"status":"ok"})
-    send_redpacket(12345, 11, 12, 1)
+    send_redpacket(uid, amount, number, f_type)
     
 
     #raise Excep('No privilege to ...', 401)

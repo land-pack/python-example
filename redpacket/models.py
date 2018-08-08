@@ -30,7 +30,6 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
             d = cursor.fetchone()
 
             if not d:
-                #raise ....
                 raise Excep('Invalid account or no enough balance to pay', 410)
             
             cursor.execute(mod_balance_sql, (f_amount, f_uid, f_amount))
