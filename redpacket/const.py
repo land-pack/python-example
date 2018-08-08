@@ -1,0 +1,9 @@
+class CASH_LOG(object):
+    RED_PACKET_SEND = 7001
+    RED_PACKET_OPEN = 7002
+    RED_PACKET_BACK = 7003
+
+class ERROR_CODE(object):
+    ERR_DEFAULT = 5000
+    ERR_OPENED_TWICE = 5001
+

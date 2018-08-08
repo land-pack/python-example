@@ -24,6 +24,10 @@ def pop_one(key):
     key = RED_PACKGE_LIST.format(key)
     return rdx.spop(key)
 
+def pull_back(key, oid):
+    key = RED_PACKGE_LIST.format(key)
+    rdx.sadd(key, oid)
+
 def is_exists(key):
     key = RED_PACKGE_LIST.format(key)
     s = rdx.exists(key)

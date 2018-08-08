@@ -12,6 +12,7 @@ cur = cnx.cursor()
 clean_account_sql = "DROP TABLE IF EXISTS `t_account`"
 clean_order_sql = "DROP TABLE IF EXISTS `t_redpacket_order`"
 clean_log_sql = "DROP TABLE IF EXISTS `t_redpacket_log`"
+clean_journal_log_sql = "DROP TABLE IF EXISTS `t_cash_log`"
 
 create_account_sql = """
     CREATE TABLE t_account(
@@ -19,6 +20,18 @@ create_account_sql = """
         f_uid BIGINT NOT NULL UNIQUE,
         f_balance DECIMAL(16,8),
         f_status int NOT NULL DEFAULT 0,
+        f_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+        PRIMARY KEY (f_id))
+"""
+
+create_journal_sql = """
+    CREATE TABLE t_cash_log(
+        f_id BIGINT NOT NULL AUTO_INCREMENT,
+        f_uid BIGINT NOT NULL,
+        f_oid BIGINT NOT NULL DEFAULT 0,
+        f_inout INT NOT NULL DEFAULT 0,
+        f_amount DECIMAL(16,8),
+        f_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
         PRIMARY KEY (f_id))
 """
 
@@ -49,16 +62,19 @@ create_log_sql = """
         f_amount DECIMAL(16, 8) NOT NULL,
         f_status INT NOT NULL DEFAULT 0,
         f_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+        unique index agd(f_oid, f_receiver),
         PRIMARY KEY(f_id))
 """
 
 cur.execute(clean_account_sql)
 cur.execute(clean_order_sql)
 cur.execute(clean_log_sql)
+cur.execute(clean_journal_log_sql)
 
 cur.execute(create_log_sql)
 cur.execute(create_order_sql)
 cur.execute(create_account_sql)
+cur.execute(create_journal_sql)
 
 cnx.commit()
 cnx.close()

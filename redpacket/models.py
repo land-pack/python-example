@@ -1,8 +1,10 @@
 import traceback
 from db import DB, rdx
+from MySQLdb import IntegrityError
 from excep import Excep
 from algo import generate
-from cache import pack_red_packet, pop_one
+from cache import pack_red_packet, pop_one, pull_back
+from const import CASH_LOG, ERROR_CODE
 
 
 def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
@@ -33,9 +35,17 @@ def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
                 f_oid, f_sender, f_amount)
                 VALUES(%s, %s, %s)
         """
+        
+        # add cash log
+        ins_cash_log = """
+            INSERT INTO t_cash_log(
+                f_uid, f_oid, f_inout, f_amount)
+                VALUES(%s, %s, %s, %s)
+        """
+
         # Generate redpacket algo ..
         redpacket_values = generate(f_amount, f_number, min_value=f_min, f_type=f_type, f_accurate=f_accurate)
-
+    
 
         try:
             cursor.execute(get_balance_sql, (f_uid, f_amount))
@@ -56,11 +66,14 @@ def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
             redpacket_oid = list(xrange(begin_oid, begin_oid + total))
             key = pack_red_packet(redpacket_oid, f_oid)
 
+            # add cash 
+            cursor.execute(ins_cash_log, (f_uid, f_oid, CASH_LOG.RED_PACKET_SEND, -f_amount))
             db.commit()    
+
         except:
             db.rollback()
             print(traceback.format_exc())
-            raise
+            raise Excep("Please report this error to us by <abc@gmail.com>", ERROR_CODE.ERR_DEFAULT)
         else:
             return key
 
@@ -98,10 +111,16 @@ def grab_redpacket(key, uid):
             prize = ret.get("amount")
             cursor.execute(update_balance, (prize, uid))
             db.commit()
+        except IntegrityError:
+            db.rollback()
+            pull_back(key, oid)
+            print(traceback.format_exc())
+            raise Excep("You couldn't grab twice", ERROR_CODE.ERR_OPENED_TWICE)
         except:
             db.rollback()
+            pull_back(key, oid)
             print(traceback.format_exc())
-            raise
+            raise Excep("Please report this error to us by <abc@gmail.com>", ERROR_CODE.ERR_DEFAULT)
         else:
             return prize
 
