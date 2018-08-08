@@ -19,8 +19,12 @@ def pack_red_packet(lst, oid, ex=24*60*60, privi=True):
     rdx.expire(key, ex)
     return key_sub
 
+
 def pop_one(key):
     return rdx.lpop(key)
+
+def is_exists(key):
+    return rdx.exists(RED_PACKGE_LIST.format(key))
 
 
 if __name__ == '__main__':
