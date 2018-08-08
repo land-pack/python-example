@@ -26,11 +26,12 @@ def api_v1_send():
     amount = d.get("amount")
     number = d.get("number")
     f_type = d.get("type") or 1
+    f_min = d.get("min") or 0.05
     # amount suggestion
 
     # random generate put it all into the redis queue & set expire time
     #return jsonify({"status":"ok"})
-    send_redpacket(uid, amount, number, f_type)
+    send_redpacket(uid, amount, number, f_type, f_min)
     
 
     #raise Excep('No privilege to ...', 401)

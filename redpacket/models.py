@@ -1,9 +1,9 @@
 import traceback
 from db import DB
 from excep import Excep
+from algo import generate
 
-
-def send_redpacket(f_uid, f_amount, f_number, f_type):
+def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
     with DB() as db:
         cursor = db.cursor()
 
@@ -37,6 +37,8 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
             [12, 123456, 23],
             [12, 123456, 3]
         ]
+        redpacket_values = generate(f_amount, f_number, min_value=f_min, f_type=f_type, f_accurate=f_accurate)
+
 
         try:
             cursor.execute(get_balance_sql, (f_uid, f_amount))
@@ -47,6 +49,9 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
             
             cursor.execute(mod_balance_sql, (f_amount, f_uid, f_amount))
             cursor.execute(ins_order_sql, (f_uid, f_amount, f_number, f_type))
+            f_oid = cursor.lastrowid
+            print("f_oid=%s" % f_oid)
+            data = [ (f_oid, f_uid, value) for value in redpacket_values]
             cursor.executemany(ins_redp_sql, (data))
 
             db.commit()    
@@ -58,7 +63,7 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
             return d if d else {}
 
 if __name__ == '__main__':
-    d = send_redpacket(123456, 2.000001, 12,1)
+    d = send_redpacket(123456, 2.000001, f_number=12,f_type=1, f_min=0.5)
     print(d)
 
     
