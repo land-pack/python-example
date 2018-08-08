@@ -7,12 +7,25 @@ def accurate(n, b=8):
     return round(Decimal(n), b)
 
 
-def re_rand(start, end, number):
-    if number == 0:
-        return 
+def re_rand(min_value, amount, number):
 
-    mid = random.randrange(start, end)
-    return re_rand(
+    ava_lst = []
+    origin_max = amount
+    for i in range(number):
+        max_value = accurate(accurate(amount - sum(ava_lst)) / (number - i))
+        mid = random.randrange(min_value, max_value, _int=float)
+        if mid >= min_value:
+            mid = accurate(mid)
+            ava_lst.append(mid)
+        else:
+            print("invalid value =%s" % mid)
+
+    ava_lst.sort()
+    print('after sort', ava_lst)
+    ava_lst[0] = accurate(ava_lst[0] + (amount - accurate(sum(ava_lst))))
+    print('after add addition part', ava_lst)
+    random.shuffle(ava_lst)
+    return ava_lst
     
 
 def generate(amount, number, min_value=0.05, f_type=0, scale=2):
@@ -25,17 +38,24 @@ def generate(amount, number, min_value=0.05, f_type=0, scale=2):
         return lst
 
     elif f_type == 1:
-        average = accurate(accurate(amount) / number)
-        max_value = average * scale
+        pass
 
     else:
+        
         return 
 
 if __name__ == '__main__':
     print("Amount 12 | number 11")
-    d = generate(12, 11)
-    s = sum(d)
-    print(d)
-    print(s)
+    #d = generate(12, 11)
+    #s = sum(d)
+    #print(d)
+    #print(s)
 
-    print(re_rand(4, 7))
+    #print(re_rand(4, 7))
+
+
+    ls = re_rand(5, 100, 10)
+
+    print(ls)
+    print(sum(ls))
+    print(len(ls))

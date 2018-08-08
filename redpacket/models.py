@@ -31,11 +31,13 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
                 f_oid, f_sender, f_amount)
                 VALUES(%s, %s, %s)
         """
+        # Generate redpacket algo ..
         data = [
             [12, 123456, 13],
             [12, 123456, 23],
             [12, 123456, 3]
         ]
+
         try:
             cursor.execute(get_balance_sql, (f_uid, f_amount))
             d = cursor.fetchone()
