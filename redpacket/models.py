@@ -4,7 +4,8 @@ from MySQLdb import IntegrityError
 from excep import Excep
 from algo import generate
 from cache import pack_red_packet, pop_one, pull_back
-from const import CASH_LOG, ERROR_CODE
+from const import err
+from const import CASH_LOG
 
 
 def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
@@ -73,7 +74,7 @@ def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
         except:
             db.rollback()
             print(traceback.format_exc())
-            raise Excep("Please report this error to us by <abc@gmail.com>", ERROR_CODE.ERR_DEFAULT)
+            raise Excep(*err.ERR_DEFAULT)
         else:
             return key
 
@@ -115,7 +116,8 @@ def grab_redpacket(key, uid):
             db.rollback()
             pull_back(key, oid)
             print(traceback.format_exc())
-            raise Excep("You couldn't grab twice", ERROR_CODE.ERR_OPENED_TWICE)
+            #raise Excep("You couldn't grab twice", ERROR_CODE.ERR_OPENED_TWICE)
+            raise Excep(*err.ERR_OPENED_TWICE)
         except:
             db.rollback()
             pull_back(key, oid)
