@@ -44,6 +44,7 @@ create_log_sql = """
         f_oid BIGINT,
         f_sender BIGINT NOT NULL,
         f_receiver BIGINT,
+        f_amount DECIMAL(16, 8) NOT NULL,
         f_status INT NOT NULL DEFAULT 0,
         f_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
         PRIMARY KEY(f_id))

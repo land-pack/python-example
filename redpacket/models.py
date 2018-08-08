@@ -24,7 +24,18 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
             f_uid, f_amount, f_number, f_type)
             VALUES(%s, %s, %s, %s)
         """
-
+        
+        # Insert all redpacket to database
+        ins_redp_sql = """
+            INSERT INTO t_redpacket_log(
+                f_oid, f_sender, f_amount)
+                VALUES(%s, %s, %s)
+        """
+        data = [
+            [12, 123456, 13],
+            [12, 123456, 23],
+            [12, 123456, 3]
+        ]
         try:
             cursor.execute(get_balance_sql, (f_uid, f_amount))
             d = cursor.fetchone()
@@ -34,6 +45,7 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
             
             cursor.execute(mod_balance_sql, (f_amount, f_uid, f_amount))
             cursor.execute(ins_order_sql, (f_uid, f_amount, f_number, f_type))
+            cursor.executemany(ins_redp_sql, (data))
 
             db.commit()    
         except:
@@ -44,7 +56,7 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
             return d if d else {}
 
 if __name__ == '__main__':
-    d = send_redpacket(12345, 11.000001, 12,1)
+    d = send_redpacket(123456, 2.000001, 12,1)
     print(d)
 
     
