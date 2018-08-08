@@ -15,21 +15,23 @@ def my_key(oid):
 def pack_red_packet(lst, oid, ex=24*60*60, privi=True):
     key_sub= my_hash(oid)
     key = RED_PACKGE_LIST.format(key_sub)
-    rdx.lpush(key, *lst)
+    rdx.sadd(key, *lst)
     rdx.expire(key, ex)
     return key_sub
 
 
 def pop_one(key):
-    return rdx.lpop(key)
+    key = RED_PACKGE_LIST.format(key)
+    return rdx.spop(key)
 
 def is_exists(key):
-    return rdx.exists(RED_PACKGE_LIST.format(key))
+    key = RED_PACKGE_LIST.format(key)
+    s = rdx.exists(key)
+    return s
 
 
 if __name__ == '__main__':
-    ret = pack_red_packet([1,2,3,4], 12)
-    print(ret)
-    w = pop_one(ret)
-    print(w)
+    #ret = pack_red_packet([1,2,3,4], 12)
+    #print(ret)
+    pass
 

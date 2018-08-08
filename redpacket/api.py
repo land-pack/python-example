@@ -3,6 +3,7 @@ from flask import jsonify
 from flask import request
 from excep import Excep
 from models import send_redpacket
+from models import grab_redpacket
 from cache import is_exists
 
 app = Flask(__name__)
@@ -35,11 +36,16 @@ def api_v1_send():
 
 @app.route("/api/v1/grab", methods=['POST'])
 def api_v1_grab():
+    # TODO GET UID BY Token
+    
     # check cache if the redpackaet exists or expire
     d = request.get_json()
     key = d.get("key") or ''
+    uid = d.get("uid")
     if not is_exists(key):
         raise Excep("Invalid redpacket", 412)
+    grab_redpacket(key, uid)
+
     return jsonify({})
 
 
