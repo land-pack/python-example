@@ -1,7 +1,9 @@
 import traceback
-from db import DB
+from db import DB, rdx
 from excep import Excep
 from algo import generate
+from cache import pack_red_packet
+
 
 def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
     with DB() as db:
@@ -32,11 +34,6 @@ def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
                 VALUES(%s, %s, %s)
         """
         # Generate redpacket algo ..
-        data = [
-            [12, 123456, 13],
-            [12, 123456, 23],
-            [12, 123456, 3]
-        ]
         redpacket_values = generate(f_amount, f_number, min_value=f_min, f_type=f_type, f_accurate=f_accurate)
 
 
@@ -50,7 +47,7 @@ def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
             cursor.execute(mod_balance_sql, (f_amount, f_uid, f_amount))
             cursor.execute(ins_order_sql, (f_uid, f_amount, f_number, f_type))
             f_oid = cursor.lastrowid
-            print("f_oid=%s" % f_oid)
+            key = pack_red_packet(redpacket_values, f_oid)
             data = [ (f_oid, f_uid, value) for value in redpacket_values]
             cursor.executemany(ins_redp_sql, (data))
 
@@ -60,7 +57,7 @@ def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
             print(traceback.format_exc())
             raise
         else:
-            return d if d else {}
+            return key
 
 if __name__ == '__main__':
     d = send_redpacket(123456, 2.000001, f_number=12,f_type=1, f_min=0.5)

@@ -5,6 +5,10 @@ It is also possible to create connection objects using the connection.MySQLConec
 import traceback
 import MySQLdb
 import MySQLdb.cursors
+import redis
+
+
+rdx = redis.Redis()
 
 
 class DB(object):
@@ -25,4 +29,8 @@ class DB(object):
     def __exit__(self, a, b, c):
         self.cnx.close()
 
-
+if __name__ == '__main__':
+    r.set('ee',123)
+    d = r.get('ee')
+    print(d)
+    r.delete('ee')

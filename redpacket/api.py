@@ -27,16 +27,17 @@ def api_v1_send():
     number = d.get("number")
     f_type = d.get("type") or 1
     f_min = d.get("min") or 0.05
-    # amount suggestion
 
     # random generate put it all into the redis queue & set expire time
-    #return jsonify({"status":"ok"})
-    send_redpacket(uid, amount, number, f_type, f_min)
-    
+    key = send_redpacket(uid, amount, number, f_type, f_min)
+    return jsonify({"key": key})
 
-    #raise Excep('No privilege to ...', 401)
-
+@app.route("/api/v1/grab", methods=['POST'])
+def api_v1_grab():
+    # check cache if the redpackaet exists or expire
     return jsonify({})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
