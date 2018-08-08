@@ -28,10 +28,12 @@ create_order_sql = """
         f_id BIGINT NOT NULL AUTO_INCREMENT,
         f_uid BIGINT NOT NULL,
         f_amount DECIMAL(16, 8) NOT NULL,
+        f_unspent DECIMAL(16, 8) NOT NULL DEFAULT 0,
         f_number INT NOT NULL COMMENT 'number of redpacket',
         f_type int NOT NULL DEFAULT 0 COMMENT '`0` Normally, `1` random; (1 ~ 1+ mean algor ID',
         f_status int NOT NULL DEFAULT 0 COMMENT '`0` New; `1` received but no open; `2` received & opened; `3` rollback to sender',
         f_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+
         PRIMARY KEY(f_id)
         )
     """

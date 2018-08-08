@@ -1,29 +1,6 @@
-"""
-It is also possible to create connection objects using the connection.MySQLConection() class:
-"""
-
 import traceback
-import MySQLdb
-import MySQLdb.cursors
-
-
-class DB(object):
-    
-    def __init__(self):
-        # config here
-        pass
-
-    def __enter__(self):
-        self.cnx = MySQLdb.connect(user='root', passwd='openmysql',
-                                host='127.0.0.1',
-                                db='test',
-                                cursorclass=MySQLdb.cursors.DictCursor
-                                )
-        #self.cursor = self.cnx.cursor(MySQLdb.DictsCursor())
-        return self.cnx
-    
-    def __exit__(self, a, b, c):
-        self.cnx.close()
+from db import DB
+from excep import Excep
 
 
 def send_redpacket(f_uid, f_amount, f_number, f_type):
@@ -41,7 +18,12 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
             SET f_balance=f_balance - %s
             WHERE f_uid=%s AND f_status=0 AND f_balance >= %s
         """
-
+        # Insert a new order to the order table
+        ins_order_sql = """
+            INSERT INTO t_redpacket_order(
+            f_uid, f_amount, f_number, f_type)
+            VALUES(%s, %s, %s, %s)
+        """
 
         try:
             cursor.execute(get_balance_sql, (f_uid, f_amount))
@@ -49,9 +31,10 @@ def send_redpacket(f_uid, f_amount, f_number, f_type):
 
             if not d:
                 #raise ....
-                pass
+                raise Excep('Invalid account or no enough balance to pay', 410)
             
             cursor.execute(mod_balance_sql, (f_amount, f_uid, f_amount))
+            cursor.execute(ins_order_sql, (f_uid, f_amount, f_number, f_type))
 
             db.commit()    
         except:
