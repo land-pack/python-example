@@ -51,7 +51,6 @@ def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
             data = [ (f_oid, f_uid, value) for value in redpacket_values]
             total = cursor.executemany(ins_redp_sql, (data))
             begin_oid = cursor.lastrowid
-            print('total', total, 'begin', begin_oid)
 
             # save oid to cache
             redpacket_oid = list(xrange(begin_oid, begin_oid + total))
@@ -76,23 +75,43 @@ def grab_redpacket(key, uid):
             SET f_status=1, f_receiver=%s
             WHERE f_id=%s AND f_status=0
         """
+        
+        prize_sql = """
+            SELECT f_amount as amount
+            FROM t_redpacket_log
+            WHERE f_id=%s
+        """
+
+        update_balance = """
+            UPDATE t_account
+            SET f_balance=f_balance + %s
+            WHERE f_uid=%s
+        """
+
+        #TODO One user get one time to grab the red-packet
 
         try:
             oid = pop_one(key)
-            print("oid=", oid)
             cursor.execute(update_sql, (uid, oid))
+            cursor.execute(prize_sql, (oid,))
+            ret = cursor.fetchone()
+            prize = ret.get("amount")
+            cursor.execute(update_balance, (prize, uid))
             db.commit()
         except:
             db.rollback()
             print(traceback.format_exc())
             raise
         else:
-            return oid
+            return prize
+
+def open_redpacket():
+    pass
 
         
 
 if __name__ == '__main__':
-    d = send_redpacket(123456, 2.000001, f_number=12,f_type=1, f_min=0.5)
+    d = send_redpacket(123456, 2.000001, f_number=12, f_type=1, f_min=0.5)
     print(d)
 
     

@@ -44,9 +44,9 @@ def api_v1_grab():
     uid = d.get("uid")
     if not is_exists(key):
         raise Excep("Invalid redpacket", 412)
-    grab_redpacket(key, uid)
+    coin = grab_redpacket(key, uid)
 
-    return jsonify({})
+    return jsonify({"coin": coin})
 
 
 
