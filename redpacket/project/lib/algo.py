@@ -21,9 +21,7 @@ def re_rand(min_value, amount, number, f_accurate):
             print("invalid value =%s" % mid)
 
     ava_lst.sort()
-    print('after sort', ava_lst)
     ava_lst[0] = accurate(ava_lst[0] + (amount - accurate(sum(ava_lst))), f_accurate)
-    print('after add addition part', ava_lst)
     random.shuffle(ava_lst)
     return ava_lst
     
@@ -38,8 +36,6 @@ def generate(amount, number, min_value=0.05, f_type=0, scale=2, f_accurate=8):
         return lst
 
     elif f_type == 1:
-        print("min_value=%s, amount=%s, number=%s, f_accurate=%s" % (
-            min_value, amount, number, f_accurate))
         try:
             return re_rand(min_value, amount, number, f_accurate)
         except ValueError:

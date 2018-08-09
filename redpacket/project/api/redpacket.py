@@ -1,19 +1,19 @@
 from flask import jsonify
 from flask import request
+from flask import Blueprint
 from flask_cors import CORS
 from project.core.excep import Excep
 from project.models import send_redpacket
 from project.models import grab_redpacket
 from project.utils.cache import is_exists
 from project.utils.log import logger
-from project.api import app
 
 
 # Config
 
 redpacket_blueprint = Blueprint('redpacket', __name__, template_folder='templates')
 
-CORS(article_blueprint)
+CORS(redpacket_blueprint)
 
 
 
