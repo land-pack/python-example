@@ -3,6 +3,7 @@ import time
 from decimal import Decimal
 from project.core.excep import Excep
 from project.utils.const import err
+from project.utils.log import logger
 
 
 def accurate(n, b=8):
@@ -11,17 +12,22 @@ def accurate(n, b=8):
 
 def re_rand(min_value, amount, number, f_accurate):
 
-    
+
+    random.seed(time.time())
+
+    if min_value == (Decimal(amount) / number):
+        logger.warning("There are only one combine is average of all")
+        return [min_value] * number
+
     ava_lst = []
     origin_max = amount
     for i in range(number):
-        max_value = accurate(accurate(amount - sum(ava_lst)) / (number - i))
-        mid = random.randrange(min_value, max_value, _int=float)
-        if mid >= min_value:
-            mid = accurate(mid, f_accurate)
-            ava_lst.append(mid)
-        else:
-            print("invalid value =%s" % mid)
+        #ava_value = accurate(accurate(amount - sum(ava_lst)) / (number - i))
+        ava_value = accurate(accurate(amount - sum(ava_lst)) / number)
+        perecentage = random.random()
+        mid = perecentage * ava_value * 2
+        mid = accurate(mid, f_accurate)
+        ava_lst.append(mid)
 
     ava_lst.sort()
     ava_lst[0] = accurate(ava_lst[0] + (amount - accurate(sum(ava_lst))), f_accurate)
