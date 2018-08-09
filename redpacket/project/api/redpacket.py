@@ -3,8 +3,8 @@ from flask import request
 from flask import Blueprint
 from flask_cors import CORS
 from project.core.excep import Excep
-from project.models import send_redpacket
-from project.models import grab_redpacket
+from project.model.models import send_redpacket
+from project.model.models import grab_redpacket
 from project.utils.cache import is_exists
 from project.utils.log import logger
 
@@ -26,6 +26,9 @@ def excep_handler(error):
     return jsonify({"status": error.status_code, "error":error.message})
 
 
+@redpacket_blueprint.route("/api/v1/send/help")
+def api_v1_send_help():
+    return render_template("help.html")
 
 @redpacket_blueprint.route("/api/v1/send", methods=['POST'])
 def api_v1_send():

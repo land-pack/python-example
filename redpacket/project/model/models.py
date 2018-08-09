@@ -1,6 +1,7 @@
 import traceback
-from db import DB, rdx
 from MySQLdb import IntegrityError
+
+from project.lib.db import DB, rdx
 from project.core.excep import Excep
 from project.lib.algo import generate
 from project.utils.cache import pack_red_packet, pop_one, pull_back
