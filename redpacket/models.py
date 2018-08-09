@@ -6,9 +6,14 @@ from algo import generate
 from cache import pack_red_packet, pop_one, pull_back
 from const import err
 from const import CASH_LOG
+from project.utils.log import logger
+
 
 
 def send_redpacket(f_uid, f_amount, f_number, f_type, f_min, f_accurate=8):
+    logger.info("f_uid=%s | f_amount=%s | f_number=%s | f_type=%s | f_min=%s | f_accurate=%s",
+        f_uid, f_amount, f_number, f_type, f_min, f_accurate)
+
     with DB() as db:
         cursor = db.cursor()
 
