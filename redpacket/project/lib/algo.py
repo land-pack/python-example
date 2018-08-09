@@ -1,7 +1,7 @@
 import random
 import time
 from decimal import Decimal
-from excep import Excep
+from project.core.excep import Excep
 
 def accurate(n, b=8):
     return round(Decimal(n), b)

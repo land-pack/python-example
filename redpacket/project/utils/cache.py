@@ -1,5 +1,5 @@
 import hashlib
-from db import rdx
+from project.db import rdx
 
 RED_PACKGE_LIST = 'red_packet_list_{}'
 
