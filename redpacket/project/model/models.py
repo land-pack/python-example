@@ -145,7 +145,7 @@ def get_expire_redpacket():
     with DB() as db:
         cursor = db.cursor()
         sql = """
-            SELECT f_id as oid
+            SELECT f_id as oid, f_uid as uid, f_amount as amount
             FROM t_redpacket_order
             WHERE f_status=0 AND DATEDIFF(CURRENT_TIMESTAMP(), f_created) >= 1
         """
@@ -157,6 +157,58 @@ def get_expire_redpacket():
             logger.error(traceback.format_exc())
         else:
             return ret
+            
+def rollback(order):
+    oid = order.get("oid")
+    uid = order.get("uid")
+
+    with DB() as db:
+        cursor = db.cursor()
+        bal_sql = """
+            UPDATE t_account
+            SET f_balance=f_balance + %s
+            WHERE f_uid=%s AND f_status=0
+        """
+        
+        mark_rollback = """
+            UPDATE t_redpacket_order
+            SET f_status=4
+            WHERE f_status=0 AND f_id=%s
+        """
+        
+        unspent = """
+            SELECT sum(f_amount) as total
+            FROM t_redpacket_log
+            WHERE f_oid=%s AND f_status=0
+        """
+        
+        mark_unspent = """
+            UPDATE t_redpacket_log
+            SET f_status=4
+            WHERE f_oid=%s AND f_status=0
+        """
+
+        # add cash log
+        ins_cash_log = """
+            INSERT INTO t_cash_log(
+                f_uid, f_oid, f_inout, f_amount)
+                VALUES(%s, %s, %s, %s)
+        """
+
+
+        try:
+
+            cursor.execute(mark_rollback, (oid,))
+            cursor.execute(unspent, (oid,))
+            ret = cursor.fetchone()
+            total = ret.get("total")
+            cursor.execute(bal_sql, (total, uid))
+            cursor.execute(mark_unspent, (oid,))
+            cursor.execute(ins_cash_log, (uid, oid, CASH_LOG.RED_PACKET_BACK, total))
+            db.commit()
+        except:
+            db.rollback()
+            logger.error(traceback.format_exc())
             
 
         
