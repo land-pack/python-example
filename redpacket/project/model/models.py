@@ -107,7 +107,12 @@ def grab_redpacket(key, uid):
             WHERE f_uid=%s
         """
 
-        #TODO One user get one time to grab the red-packet
+        # add cash log
+        ins_cash_log = """
+            INSERT INTO t_cash_log(
+                f_uid, f_oid, f_inout, f_amount)
+                VALUES(%s, %s, %s, %s)
+        """
 
         try:
             oid = pop_one(key)
@@ -116,23 +121,43 @@ def grab_redpacket(key, uid):
             ret = cursor.fetchone()
             prize = ret.get("amount")
             cursor.execute(update_balance, (prize, uid))
+            # add cash 
+            cursor.execute(ins_cash_log, (uid, oid, CASH_LOG.RED_PACKET_OPEN, prize))
             db.commit()
         except IntegrityError:
             db.rollback()
             pull_back(key, oid)
-            print(traceback.format_exc())
-            #raise Excep("You couldn't grab twice", ERROR_CODE.ERR_OPENED_TWICE)
+            logger.warning(traceback.format_exc())
             raise Excep(*err.ERR_OPENED_TWICE)
         except:
             db.rollback()
             pull_back(key, oid)
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             raise Excep("Please report this error to us by <abc@gmail.com>", ERROR_CODE.ERR_DEFAULT)
         else:
             return prize
 
-def open_redpacket():
-    pass
+def get_expire_redpacket():
+    """
+    If cache data lost, will read call this function!
+    """
+
+    with DB() as db:
+        cursor = db.cursor()
+        sql = """
+            SELECT f_id as oid
+            FROM t_redpacket_order
+            WHERE f_status=0 AND DATEDIFF(CURRENT_TIMESTAMP(), f_created) >= 1
+        """
+    
+        try:
+            cursor.execute(sql)
+            ret = cursor.fetchall()
+        except:
+            logger.error(traceback.format_exc())
+        else:
+            return ret
+            
 
         
 
