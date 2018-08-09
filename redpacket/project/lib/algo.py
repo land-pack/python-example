@@ -2,6 +2,8 @@ import random
 import time
 from decimal import Decimal
 from project.core.excep import Excep
+from project.utils.const import err
+
 
 def accurate(n, b=8):
     return round(Decimal(n), b)
@@ -9,6 +11,7 @@ def accurate(n, b=8):
 
 def re_rand(min_value, amount, number, f_accurate):
 
+    
     ava_lst = []
     origin_max = amount
     for i in range(number):
@@ -30,6 +33,12 @@ def generate(amount, number, min_value=0.05, f_type=0, scale=2, f_accurate=8):
     """
     @param f_type: 0 normal, 1 is random
     """
+    if not isinstance(number, int):
+        raise Excep(*err.ERR_TYPE_RUQ_INT)
+
+    if Decimal(amount) / number < min_value:
+        raise Excep(*err.ERR_OVER_TOTAL)
+
     if f_type == 0:
         lst = [accurate(accurate(amount) / number, f_accurate)] * number
         lst[0] = accurate(lst[0] + (amount - accurate(sum(lst))), f_accurate)
