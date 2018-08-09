@@ -5,6 +5,7 @@ from excep import Excep
 from models import send_redpacket
 from models import grab_redpacket
 from cache import is_exists
+from project.utils.log import logger
 
 app = Flask(__name__)
 
@@ -51,6 +52,7 @@ def api_v1_grab():
 
 
 if __name__ == '__main__':
+    logger.info(">>>>>>>>>>>>>Fire <<<<")
     app.run(debug=True)
 
 
