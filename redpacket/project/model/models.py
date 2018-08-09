@@ -172,7 +172,7 @@ def rollback(order):
         
         mark_rollback = """
             UPDATE t_redpacket_order
-            SET f_status=4
+            SET f_status=4, f_unspent=%s
             WHERE f_status=0 AND f_id=%s
         """
         
@@ -198,10 +198,11 @@ def rollback(order):
 
         try:
 
-            cursor.execute(mark_rollback, (oid,))
+
             cursor.execute(unspent, (oid,))
             ret = cursor.fetchone()
             total = ret.get("total")
+            cursor.execute(mark_rollback, (total, oid))
             cursor.execute(bal_sql, (total, uid))
             cursor.execute(mark_unspent, (oid,))
             cursor.execute(ins_cash_log, (uid, oid, CASH_LOG.RED_PACKET_BACK, total))
