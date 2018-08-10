@@ -1,0 +1,15 @@
+APScheduler==3.5.1
+click==6.7
+Flask==1.0.2
+Flask-Cors==3.0.6
+funcsigs==1.0.2
+futures==3.2.0
+itsdangerous==0.24
+Jinja2==2.10
+MarkupSafe==1.0
+MySQL-python==1.2.5
+pytz==2018.5
+redis==2.10.6
+six==1.11.0
+tzlocal==1.5.1
+Werkzeug==0.14.1
