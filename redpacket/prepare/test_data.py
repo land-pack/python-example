@@ -1,4 +1,11 @@
 import traceback
+import ConfigParser
+
+Config = ConfigParser.ConfigParser()
+prefix_path = os.path.dirname(os.path.abspath(__file__))
+final_path = os.path.join(prefix_path, 'config.ini')
+Config.read(final_path)
+
 from db import DB
 
 

@@ -1,12 +1,26 @@
 """
 It is also possible to create connection objects using the connection.MySQLConection() class:
 """
-
+import os
 import MySQLdb
 
-cnx = MySQLdb.connect(user='root', passwd='openmysql',
-                                host='127.0.0.1',
-                                db='test')
+import ConfigParser
+
+Config = ConfigParser.ConfigParser()
+prefix_path = os.path.dirname(os.path.abspath(__file__))
+final_path = os.path.join(prefix_path, 'config.ini')
+Config.read(final_path)
+
+
+user = Config.get("mysql","user")
+passwd = Config.get("mysql","passwd")
+host = Config.get("mysql","host")
+db = Config.get("mysql","db")
+port = Config.get("mysql","port")
+
+cnx = MySQLdb.connect(user=user, passwd=passwd,
+                                host=host,
+                                db=db)
 cur = cnx.cursor()
 
 clean_account_sql = "DROP TABLE IF EXISTS `t_account`"
