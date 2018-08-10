@@ -6,10 +6,9 @@ import traceback
 import MySQLdb
 import MySQLdb.cursors
 import redis
-import ConfigParser
+from project.utils.conf import Config
 
-
-rdx = redis.Redis()
+rdx = redis.Redis(host=Config.get("redis", "host"), port=Config.get("redis", "port"))
 
 
 class DB(object):
