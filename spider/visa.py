@@ -6,6 +6,9 @@ from say import tips
 
 
 url = "https://www.vfsvisaservice.com/DIAC-China-Appointment_new_test/AppScheduling/AppWelcome.aspx?p=Gta39GFZnstZVCxNVy83zTlkvzrXE95fkjmft28XjNg="
+#url = "https://www.baidu.com"
+
+success_counter = 0
 
 for i in range(10000):
     try:
@@ -13,8 +16,13 @@ for i in range(10000):
     except:
         print(traceback.format_exc())
     else:
-        notice_me()
-        print(r.status_code)
-    print("Try again .....{} times".format(i))
+
+        if r.status_code == 200:
+            success_counter = success_counter + 1
+            for i in range(success_counter):
+                notice_me()
+                    
+
+    print("Try again .....{} times || success time {}".format(i, success_counter))
     time.sleep(1)
-    tips()
+    #tips()
